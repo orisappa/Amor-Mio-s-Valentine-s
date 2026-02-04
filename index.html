@@ -11,7 +11,7 @@
     
     <style>
         html, body {
-            height: 100%;
+            height: 100dvh; /* Use Dynamic Viewport Height */
             margin: 0;
             padding: 0;
             overflow: hidden; 
@@ -20,12 +20,13 @@
         }
 
         .container {
-            min-height: 100vh;
+            height: 100dvh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 10px; /* Reduced padding for mobile */
             position: relative;
+            box-sizing: border-box;
         }
 
         .card {
@@ -34,24 +35,36 @@
             border: 2px solid rgba(255, 255, 255, 0.6);
             border-radius: 30px;
             width: 100%;
-            max-width: 400px;
-            padding: 30px 20px;
+            max-width: 380px;
+            /* Adjust padding and scale for small screens */
+            padding: 20px 15px;
             text-align: center;
             box-shadow: 0 10px 40px rgba(255, 77, 109, 0.2);
             position: relative;
             z-index: 50;
+            max-height: 95dvh; /* Ensure card doesn't exceed screen */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* MOBILE ADJUSTMENTS */
+        @media (max-height: 700px) {
+            .card { transform: scale(0.9); }
+            #hero-wrapper img { max-width: 120px !important; }
+            .gallery-img { height: 75px !important; }
         }
 
         /* FLOATING BEAR EFFECT */
         #hero-wrapper img {
-            max-width: 160px; /* Made the bear larger */
-            margin: 10px 0;
+            max-width: 150px;
+            margin: 5px 0;
             animation: float 3s ease-in-out infinite;
         }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+            50% { transform: translateY(-10px); }
         }
 
         /* NO BUTTON WITH FEET */
@@ -61,8 +74,9 @@
             transition: all 0.1s ease-out;
             touch-action: none;
             white-space: nowrap;
+            /* Default position adjusted for mobile card size */
             left: 55%; 
-            top: 78%;
+            top: 82%;
         }
 
         #noBtn::before, #noBtn::after {
@@ -71,69 +85,57 @@
             bottom: -18px;
             font-size: 18px;
             opacity: 0;
-            transition: opacity 0.2s;
         }
         #noBtn::before { left: 5px; }
         #noBtn::after { right: 5px; }
 
-        /* Kick animation when running */
-        .running::before { 
-            opacity: 1 !important; 
-            animation: kick 0.1s infinite alternate; 
-        }
-        .running::after { 
-            opacity: 1 !important; 
-            animation: kick 0.1s infinite alternate-reverse; 
-        }
+        .running::before { opacity: 1 !important; animation: kick 0.1s infinite alternate; }
+        .running::after { opacity: 1 !important; animation: kick 0.1s infinite alternate-reverse; }
 
         @keyframes kick {
             from { transform: translateY(0); }
             to { transform: translateY(-8px); }
         }
 
-        /* UI ELEMENTS */
         #angry-message {
-            height: 45px;
+            min-height: 35px;
             color: #d00000;
             font-weight: 700;
-            font-size: 1rem;
-            margin: 10px 0;
+            font-size: 0.9rem;
+            margin: 5px 0;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         #attempts-text {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: #fff;
-            margin-top: 15px;
+            margin-top: 10px;
             opacity: 0;
             font-weight: bold;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        .photo-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0 5px 0; }
-        .gallery-img { width: 100%; height: 95px; object-fit: cover; border-radius: 12px; border: 2px solid #fff; cursor: pointer; }
-        .gallery-img.selected { border-color: #ff4d6d; transform: scale(1.05); }
-        #gallery-caption { min-height: 20px; font-size: 0.85rem; color: #ff4d6d; font-weight: 700; margin-bottom: 10px; font-style: italic; }
+        .photo-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 5px 0; }
+        .gallery-img { width: 100%; height: 90px; object-fit: cover; border-radius: 12px; border: 2px solid #fff; cursor: pointer; }
+        .gallery-img.selected { border-color: #ff4d6d; transform: scale(1.03); }
+        #gallery-caption { min-height: 18px; font-size: 0.8rem; color: #ff4d6d; font-weight: 700; margin-bottom: 8px; font-style: italic; }
 
         .floating-heart { position: fixed; bottom: -50px; z-index: 1; pointer-events: none; animation: floatUpAnimation 5s linear forwards; }
         @keyframes floatUpAnimation { 0% { transform: translateY(0vh) scale(0); opacity: 1; } 100% { transform: translateY(-110vh) scale(1.5); opacity: 0; } }
 
-        .btn-yes { background: #ff4d6d; color: white; border: none; padding: 12px 28px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 1rem; }
-        .btn-no { background: white; color: #ff4d6d; border: 2px solid #ff4d6d; padding: 12px 28px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 1rem; }
-        .btn-share { margin-top: 15px; padding: 12px 20px; border-radius: 50px; border: 2px solid #ff4d6d; background: white; color: #ff4d6d; font-weight: bold; cursor: pointer; }
+        .btn-yes { background: #ff4d6d; color: white; border: none; padding: 10px 24px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .btn-no { background: white; color: #ff4d6d; border: 2px solid #ff4d6d; padding: 10px 24px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .btn-share { margin-top: 10px; padding: 10px 15px; border-radius: 50px; border: 2px solid #ff4d6d; background: white; color: #ff4d6d; font-weight: bold; cursor: pointer; font-size: 0.8rem; }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-    <div class="background-hearts"></div>
-    
     <main class="container" id="mainContainer">
         <div class="card">
             <header id="header-section">
-                <h1 id="typewriter" style="min-height: 1.5em; font-size: 1.6rem;"></h1>
+                <h1 id="typewriter" style="min-height: 1.5em; font-size: 1.5rem;"></h1>
             </header>
             
             <div id="hero-wrapper">
@@ -150,18 +152,18 @@
 
             <div id="angry-message"></div>
 
-            <h2 id="question" style="font-family: 'Great Vibes', cursive; font-size: 2.2rem;">Will you be my Valentine?</h2>
+            <h2 id="question" style="font-family: 'Great Vibes', cursive; font-size: 1.8rem; margin: 10px 0;">Will you be my Valentine?</h2>
             
-            <div class="buttons" id="button-group" style="display: flex; justify-content: center; gap: 20px; min-height: 60px;">
+            <div class="buttons" id="button-group" style="display: flex; justify-content: center; gap: 15px; min-height: 50px;">
                 <button id="yesBtn" class="btn-yes">Yes, absolutely!</button>
-                <div style="width: 100px;"></div> </div>
+                <div style="width: 80px;"></div> 
+            </div>
             <p id="attempts-text">Failed rejections: <span id="count">0</span></p>
 
             <div id="celebration" class="hidden">
-                <h2 style="font-family: 'Great Vibes', cursive; font-size: 2.4rem; color: #ff4d6d;">OMG REALLY?? You really do love me!! <3</h2>
-                <p style="font-size: 0.9rem; margin: 10px 0;">(Click the photo for a surprise)</p>
-                <img id="reaction-photo" src="Screenshot_20251129-224514.png" style="width: 160px; border-radius: 15px; cursor: pointer; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
-                <div id="secret-message" style="opacity:0; color:#ff4d6d; font-weight:700; margin: 15px 0; font-size: 1.3rem; transition: opacity 0.5s;">Good girl :)</div>
+                <h2 style="font-family: 'Great Vibes', cursive; font-size: 2rem; color: #ff4d6d;">OMG REALLY?? You really do love me!! <3</h2>
+                <img id="reaction-photo" src="Screenshot_20251129-224514.png" style="width: 130px; border-radius: 15px; cursor: pointer; border: 3px solid white;">
+                <div id="secret-message" style="opacity:0; color:#ff4d6d; font-weight:700; margin: 10px 0; font-size: 1.1rem; transition: opacity 0.5s;">Good girl :)</div>
                 <button id="shareBtn" class="btn-share">Click me if you want to show off to your friends ;)</button>
             </div>
         </div>
@@ -203,19 +205,13 @@
             attemptsText.style.opacity = "1";
             noBtn.classList.add('running');
 
-            // Messages
             if (attempts >= 25) {
                 angryMsg.innerText = "hehe I love you and I'm happy your having fun with it <3";
                 angryMsg.style.color = "#ff4d6d";
-            } else if (attempts >= 20) {
-                angryMsg.innerText = "DO YOU THINK THIS IS A GAME?";
-            } else if (attempts >= 15) {
-                angryMsg.innerText = "Toying with my feelings, huh?";
-            } else if (attempts >= 10) {
-                angryMsg.innerText = ">:(";
-            } else if (attempts >= 5) {
-                angryMsg.innerText = "?";
-            }
+            } else if (attempts >= 20) { angryMsg.innerText = "DO YOU THINK THIS IS A GAME?"; }
+            else if (attempts >= 15) { angryMsg.innerText = "Toying with my feelings, huh?"; }
+            else if (attempts >= 10) { angryMsg.innerText = ">:("; }
+            else if (attempts >= 5) { angryMsg.innerText = "?"; }
 
             const container = document.getElementById('mainContainer');
             const cWidth = container.clientWidth;
@@ -223,9 +219,8 @@
             const bWidth = noBtn.offsetWidth;
             const bHeight = noBtn.offsetHeight;
 
-            // Random move inside container with safe padding
-            const newX = Math.floor(Math.random() * (cWidth - bWidth - 100)) + 50;
-            const newY = Math.floor(Math.random() * (cHeight - bHeight - 100)) + 50;
+            const newX = Math.floor(Math.random() * (cWidth - bWidth - 40)) + 20;
+            const newY = Math.floor(Math.random() * (cHeight - bHeight - 40)) + 20;
 
             noBtn.style.left = newX + 'px';
             noBtn.style.top = newY + 'px';
