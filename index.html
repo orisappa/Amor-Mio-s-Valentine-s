@@ -11,13 +11,12 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
-        /* CORE SETUP */
         html, body {
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
-            -webkit-overflow-scrolling: touch;
+            overflow: hidden; /* Prevents scrollbars from appearing during the chase */
+            background-color: #ffafbd; /* Fallback color */
         }
 
         .container {
@@ -38,16 +37,16 @@
             padding: 30px 20px;
             text-align: center;
             box-shadow: 0 10px 40px rgba(255, 77, 109, 0.2);
-            position: relative;
             z-index: 10;
         }
 
-        /* RUNAWAY BUTTON WITH FEET */
+        /* FIXED POSITIONING FOR THE NO BUTTON */
         #noBtn {
-            position: relative;
-            transition: all 0.15s ease-out;
-            z-index: 9999 !important;
+            position: fixed; /* Always fixed so it doesn't "jump" contexts */
+            z-index: 9999;
+            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             touch-action: none;
+            white-space: nowrap;
         }
 
         #noBtn::before, #noBtn::after {
@@ -56,76 +55,29 @@
             bottom: -18px;
             font-size: 16px;
             opacity: 0;
-            transition: opacity 0.2s;
         }
         #noBtn::before { left: 8px; }
         #noBtn::after { right: 8px; }
 
-        .running::before { opacity: 1 !important; animation: kick 0.1s infinite alternate; }
-        .running::after { opacity: 1 !important; animation: kick 0.1s infinite alternate-reverse; }
+        .running::before { opacity: 1; animation: kick 0.1s infinite alternate; }
+        .running::after { opacity: 1; animation: kick 0.1s infinite alternate-reverse; }
 
         @keyframes kick {
             from { transform: translateY(0); }
             to { transform: translateY(-6px); }
         }
 
-        /* PHOTO GALLERY */
-        .photo-gallery {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
-
-        .gallery-img {
-            width: 100%;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 12px;
-            border: 2px solid #fff;
-            transition: transform 0.3s;
-        }
-        .gallery-img:hover { transform: scale(1.05); }
-
-        /* TIMER */
-        .countdown-container {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-        }
+        .photo-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .gallery-img { width: 100%; height: 100px; object-fit: cover; border-radius: 12px; border: 2px solid #fff; }
+        .countdown-container { margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.2); border-radius: 15px; }
         .timer-display { display: flex; justify-content: space-around; }
         .timer-number { font-size: 1.2rem; font-weight: 700; color: #ff4d6d; }
         .timer-label { font-size: 0.6rem; text-transform: uppercase; }
 
-        /* HEARTS */
-        .floating-heart {
-            position: fixed;
-            bottom: -50px;
-            z-index: 1;
-            pointer-events: none;
-            animation: floatUpAnimation 5s linear forwards;
-        }
-        @keyframes floatUpAnimation {
-            0% { transform: translateY(0vh) scale(0); opacity: 1; }
-            100% { transform: translateY(-110vh) scale(1.5); opacity: 0; }
-        }
+        .floating-heart { position: fixed; bottom: -50px; z-index: 1; pointer-events: none; animation: floatUpAnimation 5s linear forwards; }
+        @keyframes floatUpAnimation { 0% { transform: translateY(0vh) scale(0); opacity: 1; } 100% { transform: translateY(-110vh) scale(1.5); opacity: 0; } }
 
-        /* SHARE BUTTON */
-        .btn-share {
-            margin-top: 15px;
-            padding: 10px 25px;
-            border-radius: 50px;
-            border: 2px solid #ff4d6d;
-            background: white;
-            color: #ff4d6d;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            font-family: 'Outfit', sans-serif;
-        }
-        .btn-share:hover { background: #ff4d6d; color: white; }
-
+        .btn-share { margin-top: 15px; padding: 10px 25px; border-radius: 50px; border: 2px solid #ff4d6d; background: white; color: #ff4d6d; font-weight: bold; cursor: pointer; font-family: 'Outfit', sans-serif; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -152,7 +104,7 @@
 
             <h2 id="question" class="font-vibes" style="font-size: 2.2rem;">Will you be my Valentine?</h2>
             
-            <div class="buttons" id="button-group">
+            <div class="buttons" id="button-group" style="min-height: 60px; display: flex; justify-content: center; align-items: center; gap: 20px;">
                 <button id="yesBtn" class="btn btn-yes">Yes, absolutely!</button>
                 <button id="noBtn" class="btn btn-no">No</button>
             </div>
@@ -170,7 +122,7 @@
             <div id="celebration" class="hidden">
                 <h2 class="font-vibes" style="font-size: 2.3rem; color: #ff4d6d; line-height: 1.2;">OMG REALLY?? You really do love me!! <3</h2>
                 <p style="font-size: 0.8rem; margin: 10px 0;">(Click the photo for a surprise)</p>
-                <img id="reaction-photo" src="Screenshot_20251129-224514.png" style="width: 150px; border-radius: 15px; cursor: pointer; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <img id="reaction-photo" src="Screenshot_20251129-224514.png" style="width: 150px; border-radius: 15px; cursor: pointer; border: 3px solid white;">
                 <div id="secret-message" style="opacity:0; color:#ff4d6d; font-weight:700; margin: 15px 0; font-size: 1.3rem; transition: opacity 0.5s;">Good girl :)</div>
                 <button id="shareBtn" class="btn-share">Share the Love 🚀</button>
             </div>
@@ -187,7 +139,7 @@
         const music = document.getElementById('valentineMusic');
         const typewriterElement = document.getElementById('typewriter');
         
-        // 1. TYPEWRITER EFFECT
+        // 1. TYPEWRITER
         const message = "Hi love! ❤️ I have a question...";
         let charIdx = 0;
         function typeWriter() {
@@ -198,83 +150,84 @@
             }
         }
 
-        // 2. RUNAWAY NO BUTTON (FIXED FOR ALL PLATFORMS)
+        // 2. RUNAWAY NO BUTTON (ULTIMATE FIX)
+        function initNoButton() {
+            // Put it in the middle of the button group to start
+            const btnGroup = document.getElementById('button-group');
+            const rect = btnGroup.getBoundingClientRect();
+            noBtn.style.left = (rect.right - noBtn.offsetWidth) + 'px';
+            noBtn.style.top = rect.top + 'px';
+        }
+
         function moveNoButton() {
             noBtn.classList.add('running');
-            const padding = 60; // Extra padding to keep it away from edges
+            const padding = 100;
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
             
-            // Get viewport dimensions
-            const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-            const vh = Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
-            
+            // Strictly keep inside the viewport
             const maxX = vw - noBtn.offsetWidth - padding;
             const maxY = vh - noBtn.offsetHeight - padding;
             
-            const randomX = Math.floor(Math.random() * (maxX - padding) + padding);
-            const randomY = Math.floor(Math.random() * (maxY - padding) + padding);
+            const randomX = Math.floor(Math.random() * (maxX - padding)) + padding;
+            const randomY = Math.floor(Math.random() * (maxY - padding)) + padding;
             
-            noBtn.style.position = 'fixed';
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
         }
 
+        // Standard Mouse Events
+        noBtn.addEventListener('mouseenter', moveNoButton);
         noBtn.addEventListener('mouseover', moveNoButton);
+        
+        // Mobile Touch Events
         noBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
             moveNoButton();
         });
 
-        // 3. TIMER LOGIC
+        // 3. TIMER
         function updateTimer() {
             const now = new Date();
             const target = new Date(`February 14, ${now.getFullYear()} 00:00:00`);
             if (now > target) target.setFullYear(now.getFullYear() + 1);
             const diff = target - now;
-            
             document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
             document.getElementById('hours').innerText = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
             document.getElementById('minutes').innerText = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, '0');
             document.getElementById('seconds').innerText = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
         }
 
-        // 4. YES BUTTON ACTIONS
+        // 4. YES ACTIONS
         yesBtn.addEventListener('click', () => {
-            music.play().catch(e => console.log("Audio play blocked by browser. Click anywhere on page first."));
+            music.play().catch(e => console.log("Audio play failed"));
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            
-            // Hide elements
             document.getElementById('header-section').classList.add('hidden');
             document.getElementById('hero-wrapper').classList.add('hidden');
             document.getElementById('gallery').classList.add('hidden');
             document.getElementById('question').classList.add('hidden');
             document.getElementById('button-group').classList.add('hidden');
             document.getElementById('timer-box').classList.add('hidden');
-            
-            // Show celebration
             document.getElementById('celebration').classList.remove('hidden');
+            noBtn.style.display = 'none'; // Completely kill the No button
         });
 
-        // 5. SECRET MESSAGE
+        // 5. SECRET
         document.getElementById('reaction-photo').addEventListener('click', () => {
             document.getElementById('secret-message').style.opacity = '1';
         });
 
-        // 6. SHARE BUTTON
+        // 6. SHARE
         document.getElementById('shareBtn').addEventListener('click', async () => {
-            const shareData = {
-                title: 'Valentine Secret',
-                text: 'I just said YES! ❤️',
-                url: window.location.href
-            };
             if (navigator.share) {
-                try { await navigator.share(shareData); } catch (err) {}
+                try { await navigator.share({ title: 'Valentine!', text: 'YES! ❤️', url: window.location.href }); } catch (err) {}
             } else {
                 navigator.clipboard.writeText(window.location.href);
-                alert("Link copied! Share it with the world! ❤️");
+                alert("Link copied! Share it now! ❤️");
             }
         });
 
-        // 7. BACKGROUND HEARTS
+        // 7. HEARTS
         function createHeart() {
             const heart = document.createElement('div');
             heart.className = 'floating-heart';
@@ -286,11 +239,15 @@
         }
 
         window.onload = () => {
+            initNoButton();
             typeWriter();
             setInterval(createHeart, 400);
             setInterval(updateTimer, 1000);
             updateTimer();
         };
+
+        // Re-align button if window is resized
+        window.onresize = () => { if(!noBtn.classList.contains('running')) initNoButton(); };
     </script>
 </body>
 </html>
