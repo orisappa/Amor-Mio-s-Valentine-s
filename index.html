@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Be My Valentine?</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        /* Styling for your photo gallery */
+        .photo-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .gallery-img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-hearts"></div>
+    
+    <main class="container">
+        <div class="card">
+            <header>
+                <h1 class="font-outfit animate-fade-in-up">Hi love! ❤️</h1>
+            </header>
+            
+            <div class="image-container animate-pop-in">
+                <img src="./hero.png" alt="Cute Valentine Bear" class="hero-image">
+            </div>
+
+            <div class="photo-gallery animate-fade-in-up delay-1">
+                <img src="IMG_20251027_233507.jpg" class="gallery-img">
+                <img src="PXL_20251206_202142236.MP.jpg" class="gallery-img">
+                <img src="IMG_1503.jpg" class="gallery-img">
+                <img src="IMG_20260113_185107.jpg" class="gallery-img">
+            </div>
+
+            <h2 id="question" class="font-vibes animate-fade-in-up delay-1">Will you be my Valentine?</h2>
+            
+            <div class="buttons" id="button-group">
+                <button id="yesBtn" class="btn btn-yes animate-bounce">Yes, absolutely!</button>
+                <button id="noBtn" class="btn btn-no">No</button>
+            </div>
+
+            <div id="celebration" class="hidden animate-zoom-in">
+                <div class="celebration-content">
+                    <h2 class="font-vibes">OMG REALLY?? You really do love me! ❤️</h2>
+                    <img src="Screenshot_20251129-224514.png" alt="Happy Reaction" style="width: 120px; border-radius: 15px; margin: 15px 0;">
+                    <p class="font-outfit sub-text">Can't wait to celebrate with you!</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <audio id="valentineMusic">
+        <source src="Kapo x Myke Towers - ILY.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script src="script.js"></script>
+
+    <script>
+        const yesBtn = document.getElementById('yesBtn');
+        const music = document.getElementById('valentineMusic');
+
+        yesBtn.addEventListener('click', () => {
+            music.play().catch(error => {
+                console.log("Playback failed.", error);
+            });
+        });
+    </script>
+</body>
+</html>
