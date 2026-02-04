@@ -67,29 +67,10 @@
             border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        .timer-display {
-            display: flex;
-            justify-content: space-around;
-            gap: 5px;
-        }
-
-        .timer-segment {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .timer-number {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #ff4d6d;
-        }
-
-        .timer-label {
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
+        .timer-display { display: flex; justify-content: space-around; gap: 5px; }
+        .timer-segment { display: flex; flex-direction: column; align-items: center; }
+        .timer-number { font-size: 1.2rem; font-weight: 700; color: #ff4d6d; }
+        .timer-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; }
 
         /* FLOATING HEARTS */
         .floating-heart {
@@ -118,6 +99,21 @@
             opacity: 0;
             transition: opacity 0.5s ease;
         }
+
+        .btn-share {
+            margin-top: 20px;
+            background: white;
+            color: #ff4d6d;
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 2px solid #ff4d6d;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            transition: 0.3s;
+        }
+
+        .btn-share:hover { background: #ff4d6d; color: white; }
 
         .buttons { display: flex !important; flex-wrap: wrap !important; justify-content: center !important; gap: 10px !important; }
     </style>
@@ -155,109 +151,4 @@
                 <div class="timer-display">
                     <div class="timer-segment"><span id="days" class="timer-number">00</span><span class="timer-label">Days</span></div>
                     <div class="timer-segment"><span id="hours" class="timer-number">00</span><span class="timer-label">Hrs</span></div>
-                    <div class="timer-segment"><span id="minutes" class="timer-number">00</span><span class="timer-label">Min</span></div>
-                    <div class="timer-segment"><span id="seconds" class="timer-number">00</span><span class="timer-label">Sec</span></div>
-                </div>
-            </div>
-
-            <div id="celebration" class="hidden">
-                <div class="celebration-content">
-                    <h2 class="font-vibes">OMG REALLY?? ❤️</h2>
-                    <p style="font-size: 0.9rem; margin-bottom: 10px;">(Click the photo for a surprise)</p>
-                    <img id="reaction-photo" src="Screenshot_20251129-224514.png" alt="Happy" style="width: 120px; border-radius: 15px; cursor: pointer; border: 3px solid white;">
-                    <div id="secret-message">Good girl :)</div>
-                    <p class="font-outfit sub-text">Can't wait to celebrate with you!</p>
-                </div>
-            </div>
-        </div>
-    </main>
-
-    <audio id="valentineMusic">
-        <source src="Kapo x Myke Towers - ILY.mp3" type="audio/mpeg">
-    </audio>
-
-    <script src="script.js"></script>
-    <script>
-        const yesBtn = document.getElementById('yesBtn');
-        const noBtn = document.getElementById('noBtn');
-        const music = document.getElementById('valentineMusic');
-        const typewriterElement = document.getElementById('typewriter');
-        const reactionImg = document.getElementById('reaction-photo');
-        const secretMsg = document.getElementById('secret-message');
-        
-        // 1. TYPEWRITER EFFECT
-        const message = "Hi love! ❤️ I have a question...";
-        let charIndex = 0;
-        function typeWriter() {
-            if (charIndex < message.length) {
-                typewriterElement.textContent += message.charAt(charIndex);
-                charIndex++;
-                setTimeout(typeWriter, 100);
-            }
-        }
-
-        // 2. FLOATING HEARTS
-        function createHeart() {
-            const heart = document.createElement('div');
-            heart.classList.add('floating-heart');
-            heart.innerHTML = ['❤️', '💖', '💝', '💕'][Math.floor(Math.random() * 4)];
-            heart.style.left = Math.random() * 100 + 'vw';
-            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
-            document.body.appendChild(heart);
-            setTimeout(() => { heart.remove(); }, 5000);
-        }
-
-        // 3. COUNTDOWN TIMER LOGIC
-        function updateTimer() {
-            const now = new Date();
-            const year = now.getFullYear();
-            const target = new Date(`February 14, ${year} 00:00:00`);
-            
-            // If Valentine's has already passed this year, point to next year
-            if (now > target) {
-                target.setFullYear(year + 1);
-            }
-
-            const diff = target - now;
-            const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((diff % (1000 * 60)) / 1000);
-
-            document.getElementById('days').innerText = d.toString().padStart(2, '0');
-            document.getElementById('hours').innerText = h.toString().padStart(2, '0');
-            document.getElementById('minutes').innerText = m.toString().padStart(2, '0');
-            document.getElementById('seconds').innerText = s.toString().padStart(2, '0');
-        }
-
-        // 4. RUNAWAY NO BUTTON
-        noBtn.addEventListener('mouseover', () => {
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
-            noBtn.style.position = 'fixed';
-            noBtn.style.left = x + 'px';
-            noBtn.style.top = y + 'px';
-        });
-
-        // 5. YES BUTTON ACTIONS
-        yesBtn.addEventListener('click', () => {
-            music.play().catch(e => console.log("Audio play failed", e));
-            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            document.getElementById('celebration').classList.remove('hidden');
-            document.getElementById('question').classList.add('hidden');
-            document.getElementById('button-group').classList.add('hidden');
-            document.querySelector('.photo-gallery').classList.add('hidden');
-            document.getElementById('timer-box').classList.add('hidden');
-        });
-
-        reactionImg.addEventListener('click', () => { secretMsg.style.opacity = '1'; });
-
-        window.onload = () => {
-            typeWriter();
-            setInterval(createHeart, 400);
-            setInterval(updateTimer, 1000);
-            updateTimer();
-        };
-    </script>
-</body>
-</html>
+                    <div class="timer-segment
