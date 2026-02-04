@@ -39,69 +39,91 @@
             text-align: center;
             box-shadow: 0 10px 40px rgba(255, 77, 109, 0.2);
             position: relative;
-            z-index: 50; /* Card is middle layer */
+            z-index: 50;
         }
 
-        /* THE NO BUTTON - ULTIMATE DESKTOP FIX */
+        /* FLOATING BEAR EFFECT */
+        #hero-wrapper img {
+            max-width: 160px; /* Made the bear larger */
+            margin: 10px 0;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        /* NO BUTTON WITH FEET */
         #noBtn {
-            position: absolute; /* Switched to absolute within the container */
-            z-index: 100; /* Always above the card */
+            position: absolute;
+            z-index: 100;
             transition: all 0.1s ease-out;
             touch-action: none;
             white-space: nowrap;
-            /* Starting position next to Yes button */
             left: 55%; 
-            top: 75%;
+            top: 78%;
         }
 
         #noBtn::before, #noBtn::after {
             content: '🦶';
             position: absolute;
             bottom: -18px;
-            font-size: 16px;
+            font-size: 18px;
             opacity: 0;
+            transition: opacity 0.2s;
         }
-        #noBtn::before { left: 8px; }
-        #noBtn::after { right: 8px; }
+        #noBtn::before { left: 5px; }
+        #noBtn::after { right: 5px; }
 
-        .running::before { opacity: 1; animation: kick 0.1s infinite alternate; }
-        .running::after { opacity: 1; animation: kick 0.1s infinite alternate-reverse; }
+        /* Kick animation when running */
+        .running::before { 
+            opacity: 1 !important; 
+            animation: kick 0.1s infinite alternate; 
+        }
+        .running::after { 
+            opacity: 1 !important; 
+            animation: kick 0.1s infinite alternate-reverse; 
+        }
 
-        @keyframes kick { from { transform: translateY(0); } to { transform: translateY(-6px); } }
+        @keyframes kick {
+            from { transform: translateY(0); }
+            to { transform: translateY(-8px); }
+        }
 
+        /* UI ELEMENTS */
         #angry-message {
-            height: 40px;
+            height: 45px;
             color: #d00000;
             font-weight: 700;
             font-size: 1rem;
-            margin-bottom: 10px;
+            margin: 10px 0;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         #attempts-text {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             color: #fff;
             margin-top: 15px;
             opacity: 0;
             font-weight: bold;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
-        /* GALLERY */
         .photo-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0 5px 0; }
-        .gallery-img { width: 100%; height: 90px; object-fit: cover; border-radius: 12px; border: 2px solid #fff; cursor: pointer; }
+        .gallery-img { width: 100%; height: 95px; object-fit: cover; border-radius: 12px; border: 2px solid #fff; cursor: pointer; }
         .gallery-img.selected { border-color: #ff4d6d; transform: scale(1.05); }
         #gallery-caption { min-height: 20px; font-size: 0.85rem; color: #ff4d6d; font-weight: 700; margin-bottom: 10px; font-style: italic; }
 
         .floating-heart { position: fixed; bottom: -50px; z-index: 1; pointer-events: none; animation: floatUpAnimation 5s linear forwards; }
         @keyframes floatUpAnimation { 0% { transform: translateY(0vh) scale(0); opacity: 1; } 100% { transform: translateY(-110vh) scale(1.5); opacity: 0; } }
 
+        .btn-yes { background: #ff4d6d; color: white; border: none; padding: 12px 28px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+        .btn-no { background: white; color: #ff4d6d; border: 2px solid #ff4d6d; padding: 12px 28px; border-radius: 20px; font-weight: bold; cursor: pointer; font-size: 1rem; }
         .btn-share { margin-top: 15px; padding: 12px 20px; border-radius: 50px; border: 2px solid #ff4d6d; background: white; color: #ff4d6d; font-weight: bold; cursor: pointer; }
         .hidden { display: none !important; }
-        
-        .btn-yes { background: #ff4d6d; color: white; border: none; padding: 10px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; }
-        .btn-no { background: white; color: #ff4d6d; border: 2px solid #ff4d6d; padding: 10px 25px; border-radius: 20px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -115,7 +137,7 @@
             </header>
             
             <div id="hero-wrapper">
-                <img src="./hero.png" alt="Bear" style="max-width: 80px; margin: 5px 0;">
+                <img src="./hero.png" alt="Bear">
             </div>
 
             <div class="photo-gallery" id="gallery">
@@ -128,19 +150,18 @@
 
             <div id="angry-message"></div>
 
-            <h2 id="question" style="font-family: 'Great Vibes', cursive; font-size: 2rem;">Will you be my Valentine?</h2>
+            <h2 id="question" style="font-family: 'Great Vibes', cursive; font-size: 2.2rem;">Will you be my Valentine?</h2>
             
-            <div class="buttons" id="button-group" style="display: flex; justify-content: center; gap: 20px; min-height: 50px;">
+            <div class="buttons" id="button-group" style="display: flex; justify-content: center; gap: 20px; min-height: 60px;">
                 <button id="yesBtn" class="btn-yes">Yes, absolutely!</button>
-                <div style="width: 80px;"></div> 
-            </div>
+                <div style="width: 100px;"></div> </div>
             <p id="attempts-text">Failed rejections: <span id="count">0</span></p>
 
             <div id="celebration" class="hidden">
-                <h2 style="font-family: 'Great Vibes', cursive; font-size: 2.2rem; color: #ff4d6d;">OMG REALLY?? You really do love me!! <3</h2>
-                <p style="font-size: 0.8rem; margin: 10px 0;">(Click the photo for a surprise)</p>
-                <img id="reaction-photo" src="Screenshot_20251129-224514.png" style="width: 140px; border-radius: 15px; cursor: pointer; border: 3px solid white;">
-                <div id="secret-message" style="opacity:0; color:#ff4d6d; font-weight:700; margin: 15px 0; font-size: 1.2rem; transition: opacity 0.5s;">Good girl :)</div>
+                <h2 style="font-family: 'Great Vibes', cursive; font-size: 2.4rem; color: #ff4d6d;">OMG REALLY?? You really do love me!! <3</h2>
+                <p style="font-size: 0.9rem; margin: 10px 0;">(Click the photo for a surprise)</p>
+                <img id="reaction-photo" src="Screenshot_20251129-224514.png" style="width: 160px; border-radius: 15px; cursor: pointer; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <div id="secret-message" style="opacity:0; color:#ff4d6d; font-weight:700; margin: 15px 0; font-size: 1.3rem; transition: opacity 0.5s;">Good girl :)</div>
                 <button id="shareBtn" class="btn-share">Click me if you want to show off to your friends ;)</button>
             </div>
         </div>
@@ -160,7 +181,12 @@
         const attemptsText = document.getElementById('attempts-text');
         let attempts = 0;
 
-        // 1. TYPEWRITER
+        function showCaption(imgElement, text) {
+            document.querySelectorAll('.gallery-img').forEach(img => img.classList.remove('selected'));
+            imgElement.classList.add('selected');
+            document.getElementById('gallery-caption').innerText = text;
+        }
+
         const message = "Hi love! ❤️ I have a question...";
         let charIdx = 0;
         function typeWriter() {
@@ -171,14 +197,13 @@
             }
         }
 
-        // 2. NO BUTTON RUNAWAY (ABSOLUTE BOUNDS FIX)
         function moveNoButton() {
             attempts++;
             countSpan.innerText = attempts;
             attemptsText.style.opacity = "1";
             noBtn.classList.add('running');
 
-            // Messaging logic
+            // Messages
             if (attempts >= 25) {
                 angryMsg.innerText = "hehe I love you and I'm happy your having fun with it <3";
                 angryMsg.style.color = "#ff4d6d";
@@ -192,16 +217,13 @@
                 angryMsg.innerText = "?";
             }
 
-            // Calculate movement based on the CONTAINER, not the window
-            // This prevents the button from "teleporting" outside the clickable area
             const container = document.getElementById('mainContainer');
             const cWidth = container.clientWidth;
             const cHeight = container.clientHeight;
-
             const bWidth = noBtn.offsetWidth;
             const bHeight = noBtn.offsetHeight;
 
-            // Stay within 10% to 90% of the container
+            // Random move inside container with safe padding
             const newX = Math.floor(Math.random() * (cWidth - bWidth - 100)) + 50;
             const newY = Math.floor(Math.random() * (cHeight - bHeight - 100)) + 50;
 
@@ -209,22 +231,12 @@
             noBtn.style.top = newY + 'px';
         }
 
-        // Use 'mouseover' for Desktop - it catches the mouse better than mouseenter
         noBtn.addEventListener('mouseover', moveNoButton);
         noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNoButton(); });
 
-        // 3. GALLERY
-        function showCaption(imgElement, text) {
-            document.querySelectorAll('.gallery-img').forEach(img => img.classList.remove('selected'));
-            imgElement.classList.add('selected');
-            document.getElementById('gallery-caption').innerText = text;
-        }
-
-        // 4. YES ACTIONS
         yesBtn.addEventListener('click', () => {
             document.getElementById('valentineMusic').play().catch(e => {});
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
-            
             document.getElementById('header-section').classList.add('hidden');
             document.getElementById('hero-wrapper').classList.add('hidden');
             document.getElementById('gallery').classList.add('hidden');
@@ -237,7 +249,6 @@
             document.getElementById('celebration').classList.remove('hidden');
         });
 
-        // 5. SECRET & SHARE
         document.getElementById('reaction-photo').addEventListener('click', () => {
             document.getElementById('secret-message').style.opacity = '1';
         });
