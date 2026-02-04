@@ -10,20 +10,59 @@
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        /* Styling for your photo gallery */
+        /* MOBILE FIXES */
+        body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; /* Prevents side-scrolling */
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .container {
+            width: 100%;
+            padding: 20px 10px; /* Gives some breathing room on edges */
+            box-sizing: border-box;
+        }
+
+        .card {
+            width: 95%; /* Takes up most of the screen width on mobile */
+            max-width: 400px; /* Limits size on desktop */
+            margin: auto;
+            height: auto; /* Allows the card to grow as long as the content */
+            min-height: auto; 
+            padding-bottom: 30px; /* Ensures buttons aren't at the very edge */
+        }
+
         .photo-gallery {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 10px;
-            margin: 20px 0;
+            margin: 15px 0;
         }
+
         .gallery-img {
             width: 100%;
-            height: 150px;
+            height: 120px; /* Slightly shorter for mobile screens */
             object-fit: cover;
             border-radius: 10px;
             border: 3px solid #fff;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        /* Responsive Buttons */
+        .buttons {
+            display: flex;
+            flex-wrap: wrap; /* Allows buttons to stack if they are too wide */
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .hero-image {
+            max-width: 100%;
+            height: auto;
         }
     </style>
 </head>
@@ -41,14 +80,14 @@
                 <img src="./hero.png" alt="Cute Valentine Bear" class="hero-image">
             </div>
 
-            <div class="photo-gallery animate-fade-in-up delay-1">
+            <div class="photo-gallery animate-fade-in-up">
                 <img src="IMG_20251027_233507.jpg" class="gallery-img">
                 <img src="PXL_20251206_202142236.MP.jpg" class="gallery-img">
-                <img src="IMG_1503.JPG" class="gallery-img">
+                <img src="IMG_1503.jpg" class="gallery-img">
                 <img src="IMG_20260113_185107.jpg" class="gallery-img">
             </div>
 
-            <h2 id="question" class="font-vibes animate-fade-in-up delay-1">Will you be my Valentine?</h2>
+            <h2 id="question" class="font-vibes animate-fade-in-up">Will you be my Valentine?</h2>
             
             <div class="buttons" id="button-group">
                 <button id="yesBtn" class="btn btn-yes animate-bounce">Yes, absolutely!</button>
@@ -58,7 +97,7 @@
             <div id="celebration" class="hidden animate-zoom-in">
                 <div class="celebration-content">
                     <h2 class="font-vibes">OMG REALLY?? You really do love me! ❤️</h2>
-                    <img src="Screenshot_20251129-224514.png" alt="Happy Reaction" style="width: 120px; border-radius: 15px; margin: 15px 0;">
+                    <img src="Screenshot_20251129-224514.png" alt="Happy Reaction" style="width: 100px; border-radius: 15px; margin: 15px 0;">
                     <p class="font-outfit sub-text">Can't wait to celebrate with you!</p>
                 </div>
             </div>
@@ -67,7 +106,6 @@
 
     <audio id="valentineMusic">
         <source src="Kapo x Myke Towers - ILY.mp3" type="audio/mpeg">
-        Your browser does not support the audio element.
     </audio>
 
     <script src="script.js"></script>
@@ -77,9 +115,7 @@
         const music = document.getElementById('valentineMusic');
 
         yesBtn.addEventListener('click', () => {
-            music.play().catch(error => {
-                console.log("Playback failed.", error);
-            });
+            music.play().catch(error => console.log("Playback failed", error));
         });
     </script>
 </body>
