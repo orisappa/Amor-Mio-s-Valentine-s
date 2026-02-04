@@ -41,7 +41,7 @@
             z-index: 10;
         }
 
-        /* GALLERY STYLES */
+        /* PHOTO GALLERY */
         .photo-gallery { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -71,7 +71,7 @@
             font-style: italic;
         }
 
-        /* RUNAWAY NO BUTTON */
+        /* RUNAWAY BUTTON */
         #noBtn {
             position: relative;
             z-index: 9999;
@@ -116,9 +116,9 @@
             color: #ff4d6d; 
             font-weight: bold; 
             cursor: pointer;
+            font-family: 'Outfit', sans-serif;
             font-size: 0.85rem;
-            line-height: 1.2;
-            transition: all 0.2s;
+            transition: 0.3s ease;
         }
         .btn-share:hover { background: #ff4d6d; color: white; }
 
@@ -169,7 +169,7 @@
                 <p style="font-size: 0.8rem; margin: 10px 0;">(Click the photo for a surprise)</p>
                 <img id="reaction-photo" src="Screenshot_20251129-224514.png" style="width: 150px; border-radius: 15px; cursor: pointer; border: 3px solid white;">
                 <div id="secret-message" style="opacity:0; color:#ff4d6d; font-weight:700; margin: 15px 0; font-size: 1.3rem; transition: opacity 0.5s;">Good girl :)</div>
-                <button id="shareBtn" class="btn-share">Incase you want to show off to your friends ;)</button>
+                <button id="shareBtn" class="btn-share">Click me if you want to show off to your friends ;)</button>
             </div>
         </div>
     </main>
@@ -248,10 +248,16 @@
 
         document.getElementById('shareBtn').addEventListener('click', async () => {
             if (navigator.share) {
-                try { await navigator.share({ title: 'Valentine Surprise!', text: 'I said YES! ❤️', url: window.location.href }); } catch (err) {}
+                try { 
+                    await navigator.share({ 
+                        title: 'Guess who said yes? ❤️', 
+                        text: 'Look at this! I said yes! ;)', 
+                        url: window.location.href 
+                    }); 
+                } catch (err) {}
             } else {
                 navigator.clipboard.writeText(window.location.href);
-                alert("Link copied! Go show it off! ❤️");
+                alert("Link copied! Go show them! ;) ❤️");
             }
         });
 
