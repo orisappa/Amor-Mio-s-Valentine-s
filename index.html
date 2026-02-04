@@ -11,10 +11,11 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
-        /* This overrides everything else to fix the mobile cutoff */
+        /* MOBILE & INTERACTIVE OVERRIDES */
         html, body {
             height: auto !important;
             overflow-y: auto !important;
+            overflow-x: hidden !important;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -28,14 +29,16 @@
         }
 
         .card {
-            height: auto !important; /* Forces the card to grow with photos */
+            height: auto !important;
             min-height: auto !important;
             max-width: 90vw !important;
             padding: 20px !important;
             margin: 10px auto !important;
-            display: block !important; /* Stack items naturally */
+            display: block !important;
+            z-index: 10;
         }
 
+        /* GALLERY POP EFFECT */
         .photo-gallery {
             display: grid !important;
             grid-template-columns: 1fr 1fr !important;
@@ -45,20 +48,57 @@
 
         .gallery-img {
             width: 100% !important;
-            height: 100px !important; /* Smaller thumbnails to save space */
+            height: 110px !important;
             object-fit: cover !important;
-            border-radius: 8px !important;
+            border-radius: 12px !important;
+            border: 3px solid #fff !important;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+            cursor: pointer;
+        }
+
+        .gallery-img:hover {
+            transform: scale(1.1) rotate(2deg) !important;
+            z-index: 20;
+        }
+
+        /* FLOATING HEARTS STYLE */
+        .floating-heart {
+            position: fixed;
+            bottom: -50px;
+            font-size: 20px;
+            user-select: none;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatUpAnimation 5s linear forwards;
+        }
+
+        @keyframes floatUpAnimation {
+            0% { transform: translateY(0vh) scale(0); opacity: 1; }
+            100% { transform: translateY(-110vh) scale(1.5); opacity: 0; }
+        }
+
+        /* TYPEWRITER CURSOR */
+        #typewriter::after {
+            content: '|';
+            animation: blink 0.7s infinite;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+        /* SECRET MESSAGE STYLE */
+        #secret-message {
+            margin-top: 10px;
+            font-weight: bold;
+            color: #ff4d6d;
+            font-style: italic;
+            opacity: 0;
+            transition: opacity 0.5s ease;
         }
 
         .buttons {
             display: flex !important;
             flex-wrap: wrap !important;
             justify-content: center !important;
-            padding-bottom: 20px !important;
-        }
-
-        #yesBtn, #noBtn {
-            margin: 10px !important;
+            gap: 10px !important;
         }
     </style>
 </head>
@@ -69,11 +109,11 @@
     <main class="container">
         <div class="card">
             <header>
-                <h1 class="font-outfit">Hi love! ❤️</h1>
+                <h1 id="typewriter" class="font-outfit"></h1>
             </header>
             
             <div class="image-container">
-                <img src="./hero.png" alt="Cute Valentine Bear" class="hero-image" style="max-width: 150px;">
+                <img src="./hero.png" alt="Cute Valentine Bear" class="hero-image" style="max-width: 140px;">
             </div>
 
             <div class="photo-gallery">
@@ -92,9 +132,11 @@
 
             <div id="celebration" class="hidden">
                 <div class="celebration-content">
-                    <h2 class="font-vibes">OMG REALLY?? You really do love me! ❤️</h2>
-                    <img src="Screenshot_20251129-224514.png" alt="Happy" style="width: 100px; border-radius: 15px;">
-                    <p class="font-outfit sub-text">Can't wait to celebrate!</p>
+                    <h2 class="font-vibes">OMG REALLY?? ❤️</h2>
+                    <p style="font-size: 0.9rem; margin-bottom: 10px;">(Click the photo for a surprise)</p>
+                    <img id="reaction-photo" src="Screenshot_20251129-224514.png" alt="Happy" style="width: 120px; border-radius: 15px; cursor: pointer; border: 3px solid white;">
+                    <div id="secret-message">Good girl :)</div>
+                    <p class="font-outfit sub-text">Can't wait to celebrate with you!</p>
                 </div>
             </div>
         </div>
@@ -107,10 +149,62 @@
     <script src="script.js"></script>
     <script>
         const yesBtn = document.getElementById('yesBtn');
+        const noBtn = document.getElementById('noBtn');
         const music = document.getElementById('valentineMusic');
+        const typewriterElement = document.getElementById('typewriter');
+        const reactionImg = document.getElementById('reaction-photo');
+        const secretMsg = document.getElementById('secret-message');
+        
+        // 1. TYPEWRITER EFFECT
+        const message = "Hi love! ❤️ I have a question...";
+        let charIndex = 0;
+        function typeWriter() {
+            if (charIndex < message.length) {
+                typewriterElement.textContent += message.charAt(charIndex);
+                charIndex++;
+                setTimeout(typeWriter, 100);
+            }
+        }
+
+        // 2. FLOATING HEARTS
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('floating-heart');
+            heart.innerHTML = ['❤️', '💖', '💝', '💕'][Math.floor(Math.random() * 4)];
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = Math.random() * 3 + 2 + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => { heart.remove(); }, 5000);
+        }
+
+        // 3. RUNAWAY NO BUTTON (Backup in HTML)
+        noBtn.addEventListener('mouseover', () => {
+            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+            noBtn.style.position = 'fixed';
+            noBtn.style.left = x + 'px';
+            noBtn.style.top = y + 'px';
+        });
+
+        // 4. YES BUTTON ACTIONS
         yesBtn.addEventListener('click', () => {
             music.play().catch(e => console.log("Audio play failed", e));
+            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            document.getElementById('celebration').classList.remove('hidden');
+            document.getElementById('question').classList.add('hidden');
+            document.getElementById('button-group').classList.add('hidden');
+            document.querySelector('.photo-gallery').classList.add('hidden');
         });
+
+        // 5. SECRET MESSAGE TRIGGER
+        reactionImg.addEventListener('click', () => {
+            secretMsg.style.opacity = '1';
+        });
+
+        window.onload = () => {
+            typeWriter();
+            setInterval(createHeart, 400);
+        };
     </script>
 </body>
 </html>
