@@ -15,8 +15,8 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Prevents scrollbars from appearing during the chase */
-            background-color: #ffafbd; /* Fallback color */
+            overflow-x: hidden;
+            background-color: #ffafbd;
         }
 
         .container {
@@ -37,16 +37,16 @@
             padding: 30px 20px;
             text-align: center;
             box-shadow: 0 10px 40px rgba(255, 77, 109, 0.2);
+            position: relative;
             z-index: 10;
         }
 
-        /* FIXED POSITIONING FOR THE NO BUTTON */
+        /* RUNAWAY BUTTON */
         #noBtn {
-            position: fixed; /* Always fixed so it doesn't "jump" contexts */
+            position: relative; /* Starts normally in the card flow */
             z-index: 9999;
-            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.15s ease;
             touch-action: none;
-            white-space: nowrap;
         }
 
         #noBtn::before, #noBtn::after {
@@ -77,7 +77,7 @@
         .floating-heart { position: fixed; bottom: -50px; z-index: 1; pointer-events: none; animation: floatUpAnimation 5s linear forwards; }
         @keyframes floatUpAnimation { 0% { transform: translateY(0vh) scale(0); opacity: 1; } 100% { transform: translateY(-110vh) scale(1.5); opacity: 0; } }
 
-        .btn-share { margin-top: 15px; padding: 10px 25px; border-radius: 50px; border: 2px solid #ff4d6d; background: white; color: #ff4d6d; font-weight: bold; cursor: pointer; font-family: 'Outfit', sans-serif; }
+        .btn-share { margin-top: 15px; padding: 10px 25px; border-radius: 50px; border: 2px solid #ff4d6d; background: white; color: #ff4d6d; font-weight: bold; cursor: pointer; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -104,7 +104,7 @@
 
             <h2 id="question" class="font-vibes" style="font-size: 2.2rem;">Will you be my Valentine?</h2>
             
-            <div class="buttons" id="button-group" style="min-height: 60px; display: flex; justify-content: center; align-items: center; gap: 20px;">
+            <div class="buttons" id="button-group" style="display: flex; justify-content: center; gap: 20px; min-height: 50px;">
                 <button id="yesBtn" class="btn btn-yes">Yes, absolutely!</button>
                 <button id="noBtn" class="btn btn-no">No</button>
             </div>
@@ -150,25 +150,19 @@
             }
         }
 
-        // 2. RUNAWAY NO BUTTON (ULTIMATE FIX)
-        function initNoButton() {
-            // Put it in the middle of the button group to start
-            const btnGroup = document.getElementById('button-group');
-            const rect = btnGroup.getBoundingClientRect();
-            noBtn.style.left = (rect.right - noBtn.offsetWidth) + 'px';
-            noBtn.style.top = rect.top + 'px';
-        }
-
-        function moveNoButton() {
+        // 2. RUNAWAY NO BUTTON (STABLE VERSION)
+        function moveNoButton(e) {
             noBtn.classList.add('running');
-            const padding = 100;
+            noBtn.style.position = 'fixed'; // Only switches to fixed when it starts running
+            
+            const padding = 60;
             const vw = window.innerWidth;
             const vh = window.innerHeight;
             
-            // Strictly keep inside the viewport
             const maxX = vw - noBtn.offsetWidth - padding;
             const maxY = vh - noBtn.offsetHeight - padding;
             
+            // Random spot inside the visible window
             const randomX = Math.floor(Math.random() * (maxX - padding)) + padding;
             const randomY = Math.floor(Math.random() * (maxY - padding)) + padding;
             
@@ -176,11 +170,10 @@
             noBtn.style.top = randomY + 'px';
         }
 
-        // Standard Mouse Events
+        // DESKTOP: Triggers on mouse enter
         noBtn.addEventListener('mouseenter', moveNoButton);
-        noBtn.addEventListener('mouseover', moveNoButton);
         
-        // Mobile Touch Events
+        // MOBILE: Triggers on touch
         noBtn.addEventListener('touchstart', (e) => {
             e.preventDefault();
             moveNoButton();
@@ -200,7 +193,7 @@
 
         // 4. YES ACTIONS
         yesBtn.addEventListener('click', () => {
-            music.play().catch(e => console.log("Audio play failed"));
+            music.play().catch(e => console.log("Music blocked"));
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
             document.getElementById('header-section').classList.add('hidden');
             document.getElementById('hero-wrapper').classList.add('hidden');
@@ -209,7 +202,7 @@
             document.getElementById('button-group').classList.add('hidden');
             document.getElementById('timer-box').classList.add('hidden');
             document.getElementById('celebration').classList.remove('hidden');
-            noBtn.style.display = 'none'; // Completely kill the No button
+            noBtn.style.display = 'none';
         });
 
         // 5. SECRET
@@ -220,7 +213,7 @@
         // 6. SHARE
         document.getElementById('shareBtn').addEventListener('click', async () => {
             if (navigator.share) {
-                try { await navigator.share({ title: 'Valentine!', text: 'YES! ❤️', url: window.location.href }); } catch (err) {}
+                try { await navigator.share({ title: 'Valentine!', text: 'I said YES! ❤️', url: window.location.href }); } catch (err) {}
             } else {
                 navigator.clipboard.writeText(window.location.href);
                 alert("Link copied! Share it now! ❤️");
@@ -239,15 +232,11 @@
         }
 
         window.onload = () => {
-            initNoButton();
             typeWriter();
             setInterval(createHeart, 400);
             setInterval(updateTimer, 1000);
             updateTimer();
         };
-
-        // Re-align button if window is resized
-        window.onresize = () => { if(!noBtn.classList.contains('running')) initNoButton(); };
     </script>
 </body>
 </html>
