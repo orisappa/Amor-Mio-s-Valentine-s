@@ -15,8 +15,9 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
+            overflow: hidden; 
             background-color: #ffafbd;
+            font-family: 'Outfit', sans-serif;
         }
 
         .container {
@@ -41,41 +42,11 @@
             z-index: 10;
         }
 
-        /* PHOTO GALLERY */
-        .photo-gallery { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 10px; 
-            margin: 15px 0 5px 0; 
-        }
-
-        .gallery-img { 
-            width: 100%; 
-            height: 100px; 
-            object-fit: cover; 
-            border-radius: 12px; 
-            border: 2px solid #fff; 
-            cursor: pointer;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-        .gallery-img:active { transform: scale(0.95); }
-        .gallery-img.selected { border-color: #ff4d6d; transform: scale(1.05); }
-
-        #gallery-caption {
-            min-height: 20px;
-            font-family: 'Outfit', sans-serif;
-            font-size: 0.9rem;
-            color: #ff4d6d;
-            font-weight: 700;
-            margin-bottom: 15px;
-            font-style: italic;
-        }
-
-        /* RUNAWAY BUTTON */
+        /* RUNAWAY BUTTON & FEET */
         #noBtn {
             position: relative;
-            z-index: 9999;
-            transition: all 0.15s ease;
+            z-index: 9999 !important;
+            transition: all 0.12s cubic-bezier(0.18, 0.89, 0.32, 1.28);
             touch-action: none;
         }
 
@@ -97,31 +68,41 @@
             to { transform: translateY(-6px); }
         }
 
-        /* TIMER & HEARTS */
-        .countdown-container { margin-top: 20px; padding: 15px; background: rgba(255, 255, 255, 0.2); border-radius: 15px; }
-        .timer-display { display: flex; justify-content: space-around; }
-        .timer-number { font-size: 1.2rem; font-weight: 700; color: #ff4d6d; }
-        .timer-label { font-size: 0.6rem; text-transform: uppercase; }
+        /* ANGRY MESSAGES */
+        #angry-message {
+            height: 20px;
+            color: #d00000;
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            transition: transform 0.2s;
+        }
+
+        #attempts-text {
+            font-size: 0.75rem;
+            color: #fff;
+            margin-top: 15px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .pulse { animation: pulseAnim 0.3s ease; }
+        @keyframes pulseAnim {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); color: #ff4d6d; }
+            100% { transform: scale(1); }
+        }
+
+        /* GALLERY */
+        .photo-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0 5px 0; }
+        .gallery-img { width: 100%; height: 100px; object-fit: cover; border-radius: 12px; border: 2px solid #fff; cursor: pointer; transition: 0.2s; }
+        .gallery-img.selected { border-color: #ff4d6d; transform: scale(1.05); }
+        #gallery-caption { min-height: 20px; font-size: 0.9rem; color: #ff4d6d; font-weight: 700; margin-bottom: 15px; font-style: italic; }
 
         .floating-heart { position: fixed; bottom: -50px; z-index: 1; pointer-events: none; animation: floatUpAnimation 5s linear forwards; }
         @keyframes floatUpAnimation { 0% { transform: translateY(0vh) scale(0); opacity: 1; } 100% { transform: translateY(-110vh) scale(1.5); opacity: 0; } }
 
-        /* UPDATED SHARE BUTTON STYLE */
-        .btn-share { 
-            margin-top: 15px; 
-            padding: 12px 20px; 
-            border-radius: 50px; 
-            border: 2px solid #ff4d6d; 
-            background: white; 
-            color: #ff4d6d; 
-            font-weight: bold; 
-            cursor: pointer;
-            font-family: 'Outfit', sans-serif;
-            font-size: 0.85rem;
-            transition: 0.3s ease;
-        }
-        .btn-share:hover { background: #ff4d6d; color: white; }
-
+        .btn-share { margin-top: 15px; padding: 12px 20px; border-radius: 50px; border: 2px solid #ff4d6d; background: white; color: #ff4d6d; font-weight: bold; cursor: pointer; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -132,11 +113,11 @@
     <main class="container">
         <div class="card">
             <header id="header-section">
-                <h1 id="typewriter" class="font-outfit" style="min-height: 1.5em; font-size: 1.8rem;"></h1>
+                <h1 id="typewriter" style="min-height: 1.5em; font-size: 1.8rem;"></h1>
             </header>
             
             <div id="hero-wrapper">
-                <img src="./hero.png" alt="Bear" style="max-width: 100px; margin: 10px 0;">
+                <img src="./hero.png" alt="Bear" style="max-width: 90px; margin: 5px 0;">
             </div>
 
             <div class="photo-gallery" id="gallery">
@@ -147,22 +128,15 @@
             </div>
             <div id="gallery-caption">Tap a photo for a note...</div>
 
+            <div id="angry-message"></div>
+
             <h2 id="question" class="font-vibes" style="font-size: 2.2rem;">Will you be my Valentine?</h2>
             
             <div class="buttons" id="button-group" style="display: flex; justify-content: center; gap: 20px; min-height: 50px;">
                 <button id="yesBtn" class="btn btn-yes">Yes, absolutely!</button>
                 <button id="noBtn" class="btn btn-no">No</button>
             </div>
-
-            <div id="timer-box" class="countdown-container font-outfit">
-                <p style="font-size: 0.7rem; margin-bottom: 5px;">Countdown to Feb 14th:</p>
-                <div class="timer-display">
-                    <div class="timer-segment"><span id="days" class="timer-number">00</span><span class="timer-label">Days</span></div>
-                    <div class="timer-segment"><span id="hours" class="timer-number">00</span><span class="timer-label">Hrs</span></div>
-                    <div class="timer-segment"><span id="minutes" class="timer-number">00</span><span class="timer-label">Min</span></div>
-                    <div class="timer-segment"><span id="seconds" class="timer-number">00</span><span class="timer-label">Sec</span></div>
-                </div>
-            </div>
+            <p id="attempts-text">Failed rejections: <span id="count">0</span></p>
 
             <div id="celebration" class="hidden">
                 <h2 class="font-vibes" style="font-size: 2.3rem; color: #ff4d6d; line-height: 1.2;">OMG REALLY?? You really do love me!! <3</h2>
@@ -181,83 +155,98 @@
     <script>
         const yesBtn = document.getElementById('yesBtn');
         const noBtn = document.getElementById('noBtn');
-        const music = document.getElementById('valentineMusic');
-        const typewriterElement = document.getElementById('typewriter');
-        
+        const angryMsg = document.getElementById('angry-message');
+        const countSpan = document.getElementById('count');
+        const attemptsText = document.getElementById('attempts-text');
+        let attempts = 0;
+
+        // 1. TYPEWRITER
+        const message = "Hi love! ❤️ I have a question...";
+        let charIdx = 0;
+        function typeWriter() {
+            if (charIdx < message.length) {
+                document.getElementById('typewriter').innerHTML += message.charAt(charIdx);
+                charIdx++;
+                setTimeout(typeWriter, 100);
+            }
+        }
+
+        // 2. RUNAWAY LOGIC
+        function moveNoButton() {
+            attempts++;
+            countSpan.innerText = attempts;
+            attemptsText.style.opacity = "1";
+            
+            // Pulse effect
+            countSpan.classList.remove('pulse');
+            void countSpan.offsetWidth; 
+            countSpan.classList.add('pulse');
+
+            // Angry Messages logic
+            if (attempts >= 20) {
+                angryMsg.innerText = "DO YOU THINK THIS IS A GAME?";
+                angryMsg.style.transform = "scale(1.2)";
+            } else if (attempts >= 15) {
+                angryMsg.innerText = "Toying with my feelings, huh?";
+            } else if (attempts >= 10) {
+                angryMsg.innerText = ">:(";
+            } else if (attempts >= 5) {
+                angryMsg.innerText = "?";
+            }
+
+            noBtn.classList.add('running');
+            noBtn.style.position = 'fixed';
+            
+            // Safe zone: Stays within 15% to 85% of screen width/height
+            // This prevents it from ever being clipped or hidden by desktop taskbars
+            const safeX = Math.floor(Math.random() * (window.innerWidth * 0.7)) + (window.innerWidth * 0.15);
+            const safeY = Math.floor(Math.random() * (window.innerHeight * 0.7)) + (window.innerHeight * 0.15);
+            
+            noBtn.style.left = `${safeX}px`;
+            noBtn.style.top = `${safeY}px`;
+        }
+
+        noBtn.addEventListener('mouseenter', moveNoButton);
+        noBtn.addEventListener('mouseover', moveNoButton);
+        noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNoButton(); });
+
+        // 3. GALLERY
         function showCaption(imgElement, text) {
             document.querySelectorAll('.gallery-img').forEach(img => img.classList.remove('selected'));
             imgElement.classList.add('selected');
             document.getElementById('gallery-caption').innerText = text;
         }
 
-        const message = "Hi love! ❤️ I have a question...";
-        let charIdx = 0;
-        function typeWriter() {
-            if (charIdx < message.length) {
-                typewriterElement.innerHTML += message.charAt(charIdx);
-                charIdx++;
-                setTimeout(typeWriter, 100);
-            }
-        }
-
-        function moveNoButton() {
-            noBtn.classList.add('running');
-            noBtn.style.position = 'fixed';
-            const padding = 60;
-            const vw = window.innerWidth;
-            const vh = window.innerHeight;
-            const maxX = vw - noBtn.offsetWidth - padding;
-            const maxY = vh - noBtn.offsetHeight - padding;
-            const randomX = Math.floor(Math.random() * (maxX - padding)) + padding;
-            const randomY = Math.floor(Math.random() * (maxY - padding)) + padding;
-            noBtn.style.left = randomX + 'px';
-            noBtn.style.top = randomY + 'px';
-        }
-
-        noBtn.addEventListener('mouseenter', moveNoButton);
-        noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNoButton(); });
-
-        function updateTimer() {
-            const now = new Date();
-            const target = new Date(`February 14, ${now.getFullYear()} 00:00:00`);
-            if (now > target) target.setFullYear(now.getFullYear() + 1);
-            const diff = target - now;
-            document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
-            document.getElementById('hours').innerText = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
-            document.getElementById('minutes').innerText = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, '0');
-            document.getElementById('seconds').innerText = Math.floor((diff / 1000) % 60).toString().padStart(2, '0');
-        }
-
+        // 4. YES ACTIONS
         yesBtn.addEventListener('click', () => {
-            music.play().catch(e => console.log("Music blocked"));
+            document.getElementById('valentineMusic').play().catch(e => {});
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+            
             document.getElementById('header-section').classList.add('hidden');
             document.getElementById('hero-wrapper').classList.add('hidden');
             document.getElementById('gallery').classList.add('hidden');
             document.getElementById('gallery-caption').classList.add('hidden');
             document.getElementById('question').classList.add('hidden');
             document.getElementById('button-group').classList.add('hidden');
-            document.getElementById('timer-box').classList.add('hidden');
+            attemptsText.classList.add('hidden');
+            angryMsg.classList.add('hidden');
             document.getElementById('celebration').classList.remove('hidden');
             noBtn.style.display = 'none';
         });
 
+        // 5. SECRET & SHARE
         document.getElementById('reaction-photo').addEventListener('click', () => {
             document.getElementById('secret-message').style.opacity = '1';
         });
 
         document.getElementById('shareBtn').addEventListener('click', async () => {
+            const finalLink = window.location.href;
+            const msg = `I said YES! ❤️ (She tried to click no ${attempts} times lol)`;
             if (navigator.share) {
-                try { 
-                    await navigator.share({ 
-                        title: 'Guess who said yes? ❤️', 
-                        text: 'Look at this! I said yes! ;)', 
-                        url: window.location.href 
-                    }); 
-                } catch (err) {}
+                try { await navigator.share({ title: 'Valentine!', text: msg, url: finalLink }); } catch (err) {}
             } else {
-                navigator.clipboard.writeText(window.location.href);
-                alert("Link copied! Go show them! ;) ❤️");
+                navigator.clipboard.writeText(finalLink);
+                alert("Link copied! Go show off! ;) ❤️");
             }
         });
 
@@ -274,8 +263,6 @@
         window.onload = () => {
             typeWriter();
             setInterval(createHeart, 400);
-            setInterval(updateTimer, 1000);
-            updateTimer();
         };
     </script>
 </body>
