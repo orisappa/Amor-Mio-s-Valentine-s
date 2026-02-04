@@ -11,12 +11,12 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     
     <style>
-        /* CORE MOBILE FIXES */
+        /* CORE RESET & MOBILE FIXES */
         html, body {
             height: 100%;
             margin: 0;
             padding: 0;
-            overflow-x: hidden;
+            overflow: hidden; /* Prevent scrolling during the chase */
             -webkit-overflow-scrolling: touch;
         }
 
@@ -41,71 +41,53 @@
             position: relative;
         }
 
-        .photo-gallery {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
+        /* THE RUNNING NO BUTTON */
+        #noBtn {
+            position: relative;
+            transition: all 0.2s ease;
+            z-index: 999;
+            cursor: pointer;
         }
 
-        .gallery-img {
-            width: 100%;
-            height: 100px;
-            object-fit: cover;
-            border-radius: 12px;
-            border: 2px solid #fff;
+        /* LITTLE FEET */
+        #noBtn::before, #noBtn::after {
+            content: '🦶';
+            position: absolute;
+            bottom: -15px;
+            font-size: 14px;
+            opacity: 0; /* Hidden until it starts running */
+            transition: opacity 0.3s;
         }
 
-        .countdown-container {
-            margin-top: 20px;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
+        #noBtn::before { left: 15px; }
+        #noBtn::after { right: 15px; }
+
+        /* RUNNING ANIMATION */
+        .running::before {
+            opacity: 1 !important;
+            animation: kick 0.2s infinite alternate;
+        }
+        .running::after {
+            opacity: 1 !important;
+            animation: kick 0.2s infinite alternate-reverse;
         }
 
+        @keyframes kick {
+            from { transform: translateY(0) rotate(0deg); }
+            to { transform: translateY(-5px) rotate(20deg); }
+        }
+
+        /* OTHER STYLES */
+        .photo-gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
+        .gallery-img { width: 100%; height: 100px; object-fit: cover; border-radius: 12px; border: 2px solid #fff; }
+        .countdown-container { margin-top: 20px; padding: 10px; background: rgba(255, 255, 255, 0.2); border-radius: 15px; }
         .timer-display { display: flex; justify-content: space-around; }
         .timer-number { font-size: 1.1rem; font-weight: 700; color: #ff4d6d; }
         .timer-label { font-size: 0.6rem; text-transform: uppercase; }
-
-        .buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-            min-height: 50px;
-            position: relative; /* Container for button movement */
-        }
-        
-        #noBtn { 
-            transition: 0.2s ease; 
-            z-index: 999; 
-            white-space: nowrap;
-        }
-
-        .floating-heart {
-            position: fixed;
-            bottom: -50px;
-            z-index: 1;
-            animation: floatUpAnimation 5s linear forwards;
-        }
-
-        @keyframes floatUpAnimation {
-            0% { transform: translateY(0vh) scale(0); opacity: 1; }
-            100% { transform: translateY(-110vh) scale(1.5); opacity: 0; }
-        }
-
+        .floating-heart { position: fixed; bottom: -50px; z-index: 1; animation: floatUpAnimation 5s linear forwards; }
+        @keyframes floatUpAnimation { 0% { transform: translateY(0vh) scale(0); opacity: 1; } 100% { transform: translateY(-110vh) scale(1.5); opacity: 0; } }
         .hidden { display: none !important; }
-
-        .btn-share {
-            margin-top: 15px;
-            padding: 10px 20px;
-            border-radius: 50px;
-            border: 2px solid #ff4d6d;
-            background: white;
-            color: #ff4d6d;
-            font-weight: bold;
-            cursor: pointer;
-        }
+        .btn-share { margin-top: 15px; padding: 10px 20px; border-radius: 50px; border: 2px solid #ff4d6d; background: white; color: #ff4d6d; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -147,9 +129,8 @@
             </div>
 
             <div id="celebration" class="hidden">
-                <h2 class="font-vibes" style="font-size: 2.5rem; color: #ff4d6d;">OMG REALLY?? You really do love me!! <3</h2>
-                <p style="font-size: 0.8rem; margin: 5px 0;">(Click the photo for a surprise)</p>
-                <img id="reaction-photo" src="Screenshot_20251129-224514.png" style="width: 140px; border-radius: 15px; cursor: pointer; border: 3px solid white; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+                <h2 class="font-vibes" style="font-size: 2.2rem; color: #ff4d6d;">OMG REALLY?? You really do love me!! <3</h2>
+                <img id="reaction-photo" src="Screenshot_20251129-224514.png" style="width: 140px; border-radius: 15px; cursor: pointer; border: 3px solid white;">
                 <div id="secret-message" style="opacity:0; color:#ff4d6d; font-weight:700; margin: 15px 0; font-size: 1.2rem;">Good girl :)</div>
                 <button id="shareBtn" class="btn-share">Share the Love 🚀</button>
             </div>
@@ -166,7 +147,7 @@
         const music = document.getElementById('valentineMusic');
         const typewriterElement = document.getElementById('typewriter');
         
-        // 1. TYPEWRITER EFFECT
+        // 1. TYPEWRITER
         const message = "Hi love! ❤️ I have a question...";
         let i = 0;
         function typeWriter() {
@@ -177,26 +158,36 @@
             }
         }
 
-        // 2. RUNAWAY NO BUTTON (Constrained to card/screen area)
+        // 2. RUNAWAY NO BUTTON (With Feet)
         function moveNoButton() {
-            // Limits the button movement within the visible viewport but keeps it accessible
-            const x = Math.random() * (window.innerWidth - noBtn.offsetWidth - 20);
-            const y = Math.random() * (window.innerHeight - noBtn.offsetHeight - 20);
+            noBtn.classList.add('running');
+            
+            // Calculate safe bounds (viewport minus button size and small padding)
+            const padding = 20;
+            const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+            const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+            
+            // Ensure the button stays within the actual screen
+            const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+            const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
             
             noBtn.style.position = 'fixed';
-            noBtn.style.left = `${Math.max(10, x)}px`;
-            noBtn.style.top = `${Math.max(10, y)}px`;
+            noBtn.style.left = `${randomX}px`;
+            noBtn.style.top = `${randomY}px`;
         }
-        noBtn.addEventListener('mouseover', moveNoButton);
-        noBtn.addEventListener('touchstart', (e) => { e.preventDefault(); moveNoButton(); });
 
-        // 3. TIMER LOGIC
+        noBtn.addEventListener('mouseover', moveNoButton);
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Stop mobile from clicking it
+            moveNoButton();
+        });
+
+        // 3. TIMER
         function updateTimer() {
             const now = new Date();
             const target = new Date(`February 14, ${now.getFullYear()} 00:00:00`);
             if (now > target) target.setFullYear(now.getFullYear() + 1);
             const diff = target - now;
-            
             document.getElementById('days').innerText = Math.floor(diff / (1000 * 60 * 60 * 24)).toString().padStart(2, '0');
             document.getElementById('hours').innerText = Math.floor((diff / (1000 * 60 * 60)) % 24).toString().padStart(2, '0');
             document.getElementById('minutes').innerText = Math.floor((diff / 1000 / 60) % 60).toString().padStart(2, '0');
@@ -205,43 +196,24 @@
 
         // 4. YES ACTIONS
         yesBtn.addEventListener('click', () => {
-            music.play().catch(e => console.log("Music play blocked"));
+            music.play().catch(e => console.log("Music blocked"));
             confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
             
-            // HIDE ALL INITIAL ELEMENTS
-            document.getElementById('header-section').classList.add('hidden'); // Removes "Hi love!"
+            document.getElementById('header-section').classList.add('hidden');
             document.getElementById('hero-wrapper').classList.add('hidden');
             document.getElementById('gallery').classList.add('hidden');
             document.getElementById('question').classList.add('hidden');
             document.getElementById('button-group').classList.add('hidden');
             document.getElementById('timer-box').classList.add('hidden');
-            
-            // SHOW CELEBRATION
             document.getElementById('celebration').classList.remove('hidden');
+            document.body.style.overflow = 'auto'; // Re-enable scrolling
         });
 
-        // 5. SECRET MESSAGE
+        // 5. SECRET & HEARTS
         document.getElementById('reaction-photo').addEventListener('click', () => {
             document.getElementById('secret-message').style.opacity = '1';
         });
 
-        // 6. SHARE BUTTON FIXED
-        document.getElementById('shareBtn').addEventListener('click', async () => {
-            if (navigator.share) {
-                try {
-                    await navigator.share({
-                        title: 'Be My Valentine?',
-                        text: 'I said YES! ❤️',
-                        url: window.location.href,
-                    });
-                } catch (err) { console.log('Share failed'); }
-            } else {
-                alert("Copied link to clipboard!");
-                navigator.clipboard.writeText(window.location.href);
-            }
-        });
-
-        // 7. FLOATING HEARTS
         function createHeart() {
             const heart = document.createElement('div');
             heart.className = 'floating-heart';
