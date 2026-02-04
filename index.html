@@ -2,67 +2,63 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Be My Valentine?</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Great+Vibes&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
     <style>
-        /* MOBILE FIXES */
-        body {
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden; /* Prevents side-scrolling */
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        /* This overrides everything else to fix the mobile cutoff */
+        html, body {
+            height: auto !important;
+            overflow-y: auto !important;
+            -webkit-overflow-scrolling: touch;
         }
 
         .container {
-            width: 100%;
-            padding: 20px 10px; /* Gives some breathing room on edges */
-            box-sizing: border-box;
+            height: auto !important;
+            min-height: 100vh !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            padding: 20px 0 !important;
         }
 
         .card {
-            width: 95%; /* Takes up most of the screen width on mobile */
-            max-width: 400px; /* Limits size on desktop */
-            margin: auto;
-            height: auto; /* Allows the card to grow as long as the content */
-            min-height: auto; 
-            padding-bottom: 30px; /* Ensures buttons aren't at the very edge */
+            height: auto !important; /* Forces the card to grow with photos */
+            min-height: auto !important;
+            max-width: 90vw !important;
+            padding: 20px !important;
+            margin: 10px auto !important;
+            display: block !important; /* Stack items naturally */
         }
 
         .photo-gallery {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 15px 0;
+            display: grid !important;
+            grid-template-columns: 1fr 1fr !important;
+            gap: 10px !important;
+            margin-bottom: 20px !important;
         }
 
         .gallery-img {
-            width: 100%;
-            height: 120px; /* Slightly shorter for mobile screens */
-            object-fit: cover;
-            border-radius: 10px;
-            border: 3px solid #fff;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100% !important;
+            height: 100px !important; /* Smaller thumbnails to save space */
+            object-fit: cover !important;
+            border-radius: 8px !important;
         }
 
-        /* Responsive Buttons */
         .buttons {
-            display: flex;
-            flex-wrap: wrap; /* Allows buttons to stack if they are too wide */
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
+            display: flex !important;
+            flex-wrap: wrap !important;
+            justify-content: center !important;
+            padding-bottom: 20px !important;
         }
 
-        .hero-image {
-            max-width: 100%;
-            height: auto;
+        #yesBtn, #noBtn {
+            margin: 10px !important;
         }
     </style>
 </head>
@@ -73,32 +69,32 @@
     <main class="container">
         <div class="card">
             <header>
-                <h1 class="font-outfit animate-fade-in-up">Hi love! ❤️</h1>
+                <h1 class="font-outfit">Hi love! ❤️</h1>
             </header>
             
-            <div class="image-container animate-pop-in">
-                <img src="./hero.png" alt="Cute Valentine Bear" class="hero-image">
+            <div class="image-container">
+                <img src="./hero.png" alt="Cute Valentine Bear" class="hero-image" style="max-width: 150px;">
             </div>
 
-            <div class="photo-gallery animate-fade-in-up">
+            <div class="photo-gallery">
                 <img src="IMG_20251027_233507.jpg" class="gallery-img">
                 <img src="PXL_20251206_202142236.MP.jpg" class="gallery-img">
-                <img src="IMG_1503.JPG" class="gallery-img">
+                <img src="IMG_1503.jpg" class="gallery-img">
                 <img src="IMG_20260113_185107.jpg" class="gallery-img">
             </div>
 
-            <h2 id="question" class="font-vibes animate-fade-in-up">Will you be my Valentine?</h2>
+            <h2 id="question" class="font-vibes">Will you be my Valentine?</h2>
             
             <div class="buttons" id="button-group">
-                <button id="yesBtn" class="btn btn-yes animate-bounce">Yes, absolutely!</button>
+                <button id="yesBtn" class="btn btn-yes">Yes, absolutely!</button>
                 <button id="noBtn" class="btn btn-no">No</button>
             </div>
 
-            <div id="celebration" class="hidden animate-zoom-in">
+            <div id="celebration" class="hidden">
                 <div class="celebration-content">
                     <h2 class="font-vibes">OMG REALLY?? You really do love me! ❤️</h2>
-                    <img src="Screenshot_20251129-224514.png" alt="Happy Reaction" style="width: 100px; border-radius: 15px; margin: 15px 0;">
-                    <p class="font-outfit sub-text">Can't wait to celebrate with you!</p>
+                    <img src="Screenshot_20251129-224514.png" alt="Happy" style="width: 100px; border-radius: 15px;">
+                    <p class="font-outfit sub-text">Can't wait to celebrate!</p>
                 </div>
             </div>
         </div>
@@ -109,13 +105,11 @@
     </audio>
 
     <script src="script.js"></script>
-
     <script>
         const yesBtn = document.getElementById('yesBtn');
         const music = document.getElementById('valentineMusic');
-
         yesBtn.addEventListener('click', () => {
-            music.play().catch(error => console.log("Playback failed", error));
+            music.play().catch(e => console.log("Audio play failed", e));
         });
     </script>
 </body>
